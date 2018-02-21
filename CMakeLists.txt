@@ -31,6 +31,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
 
 # getting-started
 add_executable(CarpentryTutor src/main.cpp)
+add_executable(exampleOne spike/exampleOne/exampleOne.cpp)
 include_directories(CarpentryTutor ${ADDITIONAL_INCLUDE_DIRS})
 target_link_libraries(CarpentryTutor ${REALSENSE2_FOUND})
 set_target_properties (CarpentryTutor PROPERTIES FOLDER Examples)
