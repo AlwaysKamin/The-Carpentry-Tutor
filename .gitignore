@@ -1,0 +1,6 @@
+
+.idea/
+*.xml
+.idea/The-Carpentry-Tutor.iml
+bin/
+cmake-build-debug/
