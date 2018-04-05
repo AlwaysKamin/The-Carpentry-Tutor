@@ -56,7 +56,7 @@ target_link_libraries(CarpentryTutor ${REALSENSE2_FOUND})
 set_target_properties (CarpentryTutor PROPERTIES FOLDER Examples)
 
 add_executable(GuiTesting spike/GuiTesting/GuiTesting.cpp)
-include_directories(GuiTesting ${ADDITIONAL_INCLUDE_DIRS} include)
+include_directories(GuiTesting ${ADDITIONAL_INCLUDE_DIRS} include lib/imgui)
 target_link_libraries(
         GuiTesting
         imgui
@@ -64,6 +64,8 @@ target_link_libraries(
         glfw
         ${GLEW_LIBRARIES}
 )
+
+
 
 install(
         TARGETS
