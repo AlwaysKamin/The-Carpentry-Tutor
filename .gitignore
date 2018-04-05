@@ -4,3 +4,4 @@
 .idea/The-Carpentry-Tutor.iml
 bin/
 cmake-build-debug/
+lib/.DS_Store
