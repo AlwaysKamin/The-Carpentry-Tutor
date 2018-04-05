@@ -1,10 +1,11 @@
 #  minimum required cmake version: 3.1.0
 cmake_minimum_required(VERSION 3.1.0)
 
-project(CarpentryTutor)
+project(cmake-build-debug/CarpentryTutor)
 
 # Save the command line compile commands in the build output
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
 
 # Make project require C++11
 include(CheckCXXCompilerFlag)
@@ -29,12 +30,40 @@ endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_HOME_DIRECTORY}/bin)
 
+add_subdirectory(lib/imgui)
+
+# glfw
+find_package(glfw3 REQUIRED)
+include_directories(${GLFW_INCLUDE_DIRS})
+link_libraries(${GLFW_LIBRARY_DIRS})
+
+# opengl
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+# glew
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+
+if (APPLE)
+    find_library(OpenGL_LIBRARY OpenGL)
+endif (APPLE)
+
 # getting-started
 add_executable(CarpentryTutor src/main.cpp)
-add_executable(exampleOne spike/exampleOne/exampleOne.cpp)
-include_directories(CarpentryTutor ${ADDITIONAL_INCLUDE_DIRS})
+include_directories(include)
 target_link_libraries(CarpentryTutor ${REALSENSE2_FOUND})
 set_target_properties (CarpentryTutor PROPERTIES FOLDER Examples)
+
+add_executable(GuiTesting spike/GuiTesting/GuiTesting.cpp)
+include_directories(GuiTesting ${ADDITIONAL_INCLUDE_DIRS} include)
+target_link_libraries(
+        GuiTesting
+        imgui
+        ${OPENGL_LIBRARIES}
+        glfw
+        ${GLEW_LIBRARIES}
+)
 
 install(
         TARGETS
