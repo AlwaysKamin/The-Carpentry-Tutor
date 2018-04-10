@@ -65,6 +65,21 @@ target_link_libraries(
         ${GLEW_LIBRARIES}
 )
 
+add_executable(modelingTest spike/modelingTest/modelingTest.cpp)
+include_directories(modelingTest ${ADDITIONAL_INCLUDE_DIRS} include lib/imgui)
+target_link_libraries(
+        modelingTest
+        imgui
+        ${OPENGL_LIBRARIES}
+        glfw
+        ${GLEW_LIBRARIES}
+)
+
+
+add_executable(distanceTest spike/distanceTest/distanceTest.cpp)
+include_directories(distanceTest ${ADDITIONAL_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} include lib/imgui)
+target_link_libraries(distanceTest ${REALSENSE2_FOUND} ${GLFW_LIBRARIES})
+set_target_properties (distanceTest PROPERTIES FOLDER Examples)
 
 
 install(
