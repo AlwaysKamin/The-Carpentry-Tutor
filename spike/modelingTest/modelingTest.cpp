@@ -7,7 +7,7 @@
 #define TOTAL_DEPTH 500
 
 struct centerPosition{
-    GLfloat x = SCREEN_WIDTH / 2.0f;
+    GLfloat x = SCREEN_WIDTH  / 2.0f;
     GLfloat y = SCREEN_HEIGHT / 2.0f;
     GLfloat z =  -(TOTAL_DEPTH);
 }blockPos;
@@ -58,7 +58,7 @@ int main(){
     glfwMakeContextCurrent( window );
 
     // The section of the window openGL will display to
-    glViewport( 0.0f, SCREEN_HEIGHT / 2, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 );
+    glViewport( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT );
 
     // Sets the matrix mode to projection which is used for camera manipulation; from what I can tell
     glMatrixMode( GL_PROJECTION );
