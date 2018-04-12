@@ -45,12 +45,14 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 
+find_package(OpenCV REQUIRED)
+
 if (APPLE)
     find_library(OpenGL_LIBRARY OpenGL)
 endif (APPLE)
 
 # getting-started
-add_executable(CarpentryTutor src/main.cpp)
+add_executable(CarpentryTutor src/main.cpp src/window.cpp include/window.h)
 include_directories(include)
 target_link_libraries(CarpentryTutor ${REALSENSE2_FOUND})
 set_target_properties (CarpentryTutor PROPERTIES FOLDER Examples)
@@ -78,7 +80,11 @@ target_link_libraries(
 
 add_executable(distanceTest spike/distanceTest/distanceTest.cpp)
 include_directories(distanceTest ${ADDITIONAL_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} include lib/imgui)
-target_link_libraries(distanceTest ${REALSENSE2_FOUND} ${GLFW_LIBRARIES})
+target_link_libraries(
+        distanceTest
+        ${OpenCV_LIBS}
+        ${REALSENSE2_FOUND}
+        ${GLFW_LIBRARIES})
 set_target_properties (distanceTest PROPERTIES FOLDER Examples)
 
 
