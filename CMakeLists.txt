@@ -11,21 +11,20 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
+if (COMPILER_SUPPORTS_CXX11)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 
-
-elseif(COMPILER_SUPPORTS_CXX0X)
+elseif (COMPILER_SUPPORTS_CXX0X)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-endif()
+endif ()
 
 find_library(REALSENSE2_FOUND realsense2 HINTS ${LIBRARY_DIR} REQUIRED)
-if(NOT REALSENSE2_FOUND)
+if (NOT REALSENSE2_FOUND)
     SET(REALSENSE2_FOUND "realsense2")
     message(WARN "Failed to find_library(realsense2)")
-endif()
+endif ()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_HOME_DIRECTORY}/bin)
@@ -54,8 +53,12 @@ endif (APPLE)
 # getting-started
 add_executable(CarpentryTutor src/main.cpp src/window.cpp include/window.h)
 include_directories(include)
-target_link_libraries(CarpentryTutor ${REALSENSE2_FOUND})
-set_target_properties (CarpentryTutor PROPERTIES FOLDER Examples)
+target_link_libraries(CarpentryTutor
+        ${REALSENSE2_FOUND}
+        imgui
+        ${OPENGL_LIBRARIES}
+        glfw
+        ${GLEW_LIBRARIES})
 
 add_executable(GuiTesting spike/GuiTesting/GuiTesting.cpp)
 include_directories(GuiTesting ${ADDITIONAL_INCLUDE_DIRS} include lib/imgui)
@@ -85,7 +88,7 @@ target_link_libraries(
         ${OpenCV_LIBS}
         ${REALSENSE2_FOUND}
         ${GLFW_LIBRARIES})
-set_target_properties (distanceTest PROPERTIES FOLDER Examples)
+set_target_properties(distanceTest PROPERTIES FOLDER Examples)
 
 
 install(
