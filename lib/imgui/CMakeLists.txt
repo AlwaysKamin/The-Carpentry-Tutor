@@ -12,4 +12,4 @@ add_library(
         stb_rect_pack.h
         stb_textedit.h
         stb_truetype.h
-        )
+)
