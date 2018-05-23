@@ -119,8 +119,6 @@ int main(int, char **) {
     glewInit();
 
     ImGui_ImplGlfwGL3_Init(window, true); //ImGui Bindings for GLFW3
-    //the vertices of the triangle
-
 
 
     GLuint renderedTexture;
@@ -149,15 +147,20 @@ int main(int, char **) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // 1. Show a simple window
         // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears in a window automatically called "Debug"
+        ImGui::SetNextWindowPos(ImVec2(10,10));
         {
+            ImGui::Begin("Debug Panel");
+            ImGui::SetWindowSize(ImVec2(100,100));
             static float f = 0.0f;
             static char buf[32] = "input Text";
             ImGui::Text("Hello, world!");
             ImGui::Button("Test BUtton");
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
                         ImGui::GetIO().Framerate);
+            ImGui::End();
         }
 
+        ImGui::SetNextWindowPos(ImVec2(10,100));
         {
             ImGui::Begin("Data Collector");
             if (ImGui::Button("Get depth information")) {
@@ -172,6 +175,7 @@ int main(int, char **) {
             ImGui::End();
         }
 
+        ImGui::SetNextWindowPos(ImVec2(300, 10));
         {
             ImGui::Begin("Game rendering");
             {
