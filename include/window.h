@@ -9,7 +9,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-
+#include <imgui.h>
+#include <imgui_impl_glfw_gl3.h>
 
 class window {
 public:
@@ -17,6 +18,11 @@ public:
     bool windowNotCLosed();
     void render();
     void renderObject();
+    void settingsPane();
+    void leftViewPane();
+    void topViewPane();
+    void frontViewPane();
+    void objectViewPane();
     void closeWindow();
 
     void error_callback(int error, const char *description);
@@ -28,7 +34,8 @@ public:
 
 private:
     GLFWwindow* mWindow;
-    int mScreenWidth, mScreenHeight;
+    int mScreenWidth, mScreenHeight, mGapSize, mWindowWidth, mWindowHeight;
+    float spW, spH, vpW, vpH;
 
 
     bool mWindowClosed = true;
@@ -42,6 +49,7 @@ private:
     };
 
     std::string mWindowName;
+    ImVec4 clear_color = ImColor(114, 144, 154);
 
 
 };
