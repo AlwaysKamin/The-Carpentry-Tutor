@@ -1,16 +1,15 @@
 //
 // Created by Kamin Fay on 4/10/18.
 //
-
-#ifndef CMAKE_BUILD_DEBUG_CARPENTRYTUTOR_WINDOW_H
-#define CMAKE_BUILD_DEBUG_CARPENTRYTUTOR_WINDOW_H
-
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
 #include <imgui.h>
 #include <imgui_impl_glfw_gl3.h>
+#include <string>
+#include <vector>
+#include "fileManipulation.h"
+
 
 class window {
 public:
@@ -51,8 +50,9 @@ private:
     std::string mWindowName;
     ImVec4 clear_color = ImColor(114, 144, 154);
 
+    bool mCheckFiles = true;
+    stringvec v;
+    charvec vc;
 
 };
 
-
-#endif //CMAKE_BUILD_DEBUG_CARPENTRYTUTOR_WINDOW_H

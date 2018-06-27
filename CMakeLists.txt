@@ -51,7 +51,7 @@ if (APPLE)
 endif (APPLE)
 
 # getting-started
-add_executable(CarpentryTutor src/main.cpp src/window.cpp include/window.h)
+add_executable(CarpentryTutor src/main.cpp src/window.cpp include/window.h src/fileManipulation.cpp include/fileManipulation.h)
 include_directories(include)
 target_link_libraries(CarpentryTutor
         ${REALSENSE2_FOUND}
@@ -79,6 +79,9 @@ target_link_libraries(
         glfw
         ${GLEW_LIBRARIES}
 )
+
+add_executable(fileTesting spike/fileTesting/fileTesting.cpp)
+include_directories(fileTesting ${ADDITIONAL_INCLUDE_DIRS} include)
 
 
 add_executable(distanceTest spike/distanceTest/distanceTest.cpp)

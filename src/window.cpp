@@ -3,9 +3,7 @@
 //
 
 #include "window.h"
-
-
-
+#include <imgui_internal.h>
 
 
 window::window(std::string windowName) {
@@ -87,7 +85,7 @@ void window::render(){
     while(!glfwWindowShouldClose(mWindow)){
         ImGui_ImplGlfwGL3_NewFrame();
         glfwGetWindowSize(mWindow, &mWindowWidth, &mWindowHeight);
-        std::cout << mWindowWidth << "-----" << mWindowHeight << std::endl;
+        //std::cout << mWindowWidth << "-----" << mWindowHeight << std::endl;
         spW = ((mWindowWidth * .25) - (1.5 * mGapSize));
         spH = ((mWindowHeight) - (2 * mGapSize));
         vpW = (((mWindowWidth * .75) / 2) - mGapSize);
@@ -154,9 +152,81 @@ void window::settingsPane(){
     mWindowHeight = 1080;
     {
         ImGui::SetNextWindowPos(ImVec2(mGapSize, mGapSize));
-        ImGui::Begin("SettingsPane");
-        ImGui::SetWindowSize(ImVec2(spW, spH));
-        ImGui::Text("First Test panel");
+        ImGui::Begin("Settings");
+        {
+            ImGui::SetWindowSize(ImVec2(spW, spH));
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
+                        ImGui::GetIO().Framerate);
+            ImGui::Separator();
+            if (ImGui::CollapsingHeader("File Modifications")) {
+                if (ImGui::TreeNode("Saving")) {
+//                    static char buf[32];
+//                    ImGui::InputText("input", buf, IM_ARRAYSIZE(buf));
+                    if (ImGui::Button("Open File"))
+                        ImGui::OpenPopup("savePopup");
+                    ImGui::SetNextWindowPos(ImVec2((2* mGapSize) + spW, mGapSize));
+                    if (ImGui::BeginPopupModal("savePopup")) {
+
+                        ImGui::SetWindowSize(ImVec2(vpW, vpH));
+
+                        int numberOfFiles = 0;
+
+                        std::string fileName;
+
+                            stringvec vNum;
+                            numberOfFiles = getNumberOfFiles("../templates/", vNum);
+                            vNum.clear();
+                            char *fileListTemp[numberOfFiles];
+                            read_directory("../templates/", v, vc, fileListTemp);
+                            mCheckFiles = false;
+
+                        ImGui::Columns(3, "FileBrowser", false);
+                        ImGui::Separator();
+                        for(int i = 0; i < numberOfFiles; i++){
+                            //ImGui::Text("%s", v[i].c_str());
+                            char labelBuff[32];
+                            sprintf(labelBuff, vc[i], i);
+                            if(ImGui::Selectable(labelBuff)){
+
+                                fileName = labelBuff;
+                                std::cout << labelBuff << std::endl;
+                                readFile(fileName);
+                            }
+                            ImGui::NextColumn();
+                        }
+
+                        //TODO implement list boxes to allow for file selection
+
+//                        static int current_item = 1;
+////                        if(ImGui::ListBox("##", &current_item, vector_string_items_getter, &v, v.size(), 10)){
+////
+////                        }
+
+
+                        if (ImGui::Button("Close"))
+                            ImGui::CloseCurrentPopup();
+                        ImGui::EndPopup();
+                        clearVectors(v, vc);
+                    }
+
+                    ImGui::TextWrapped(
+                            "The logging API redirects all text output so you can easily capture the content of a window or a block. Tree nodes can be automatically expanded. You can also call ImGui::LogText() to output directly to the log without a visual output.");
+                    ImGui::TreePop();
+                }
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::CollapsingHeader("Tools")) {
+
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::CollapsingHeader("Help")) {
+
+            }
+        }
         ImGui::End();
     }
 }
@@ -187,6 +257,10 @@ void window::frontViewPane(){
         ImGui::Begin("Front View");
         ImGui::SetWindowSize(ImVec2(vpW, vpH));
         ImGui::Text("First Test panel");
+        std::vector<std::string> test = {"test", "Test 2", "Test 3"};
+        for(int i = 0; i < 3; i++){
+            ImGui::Text(test[i].c_str());
+        }
         ImGui::End();
     }
 }
