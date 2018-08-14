@@ -1,6 +1,7 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <math.h>
 
 #define SCREEN_WIDTH  1920
 #define SCREEN_HEIGHT  1080
@@ -24,10 +25,14 @@ struct dimensions {
     GLfloat width;
 } block;
 
+
+
 void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
 void renderBlock(centerPosition bPos, dimensions block);
 void renderBlockFilled(centerPositionFilled bPos, dimensions block);
+void DrawCircle(float cx, float cy, float r, int num_segments);
+
 
 GLfloat rotationX = 0.0f;
 GLfloat rotationY = 0.0f;
@@ -97,7 +102,10 @@ int main() {
         //Calls Draw blocks to calculate and render the block
         //Param 1: block position struct
         // Param 2: Block dimensions struct
-        renderBlock(blockPos, block);
+        //renderBlock(blockPos, block);
+
+        DrawCircle(500, 500, 300, 22);
+
         //renderBlockFilled(blockPosFilled, block);
 
         glPopMatrix();
@@ -135,6 +143,8 @@ void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods
 }
 
 void renderBlock(centerPosition bPos, dimensions block) {
+
+
     GLfloat vertices[] = {
             //Front face
             bPos.x - (0.5f * block.length), bPos.y + (0.5f * block.width), bPos.z + (0.5f * block.depth), // Top left
@@ -197,6 +207,27 @@ void renderBlock(centerPosition bPos, dimensions block) {
     glDisableClientState(GL_VERTEX_ARRAY);
 
 }
+
+void DrawCircle(GLfloat centerX, GLfloat centerY, GLfloat radius, int num_segments)
+{
+    int i;
+    int triangleAmount = 20; //# of triangles used to draw circle
+
+    float PI = 3.14159;
+    //GLfloat radius = 0.8f; //radius
+    GLfloat twicePi = 2.0f * PI;
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(centerX, centerY); // center of circle
+    for(i = 0; i <= triangleAmount;i++) {
+        glVertex2f(
+                centerX + (radius * cos(i *  twicePi / num_segments)),
+                centerY + (radius * sin(i * twicePi / num_segments))
+        );
+    }
+    glEnd();
+}
+
 
 void renderBlockFilled(centerPositionFilled bPos, dimensions block) {
     GLfloat vertices[] = {

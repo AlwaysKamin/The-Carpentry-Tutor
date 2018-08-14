@@ -28,7 +28,7 @@ void multiply(int x, int y) {
     std::cout << x * y << std::endl;
 }
 
-GLuint renderToWidget(){
+GLuint renderToWidget(ImVec2 pos){
     float vertices[] = {
             // positions         // colors
             0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
@@ -95,6 +95,22 @@ GLuint renderToWidget(){
     // Closes the client state
     glDisableClientState(GL_VERTEX_ARRAY);
 
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    GLuint mRenderedTexture;
+
+    glGenTextures(1, &mRenderedTexture);
+    glBindTexture(GL_TEXTURE_2D, mRenderedTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    mRenderedTexture = fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // Ask ImGui to draw it as an image:
+    // Under OpenGL the ImGUI image type is GLuint
+    // So make sure to use "(void *)tex" but not "&tex"
+    ImGui::GetWindowDrawList()->AddImage(
+            (void *)mRenderedTexture, ImVec2(ImGui::GetItemRectMin().x + pos.x,
+                                             ImGui::GetItemRectMin().y + pos.y),
+            ImVec2(pos.x + 640 / 2, pos.y + 600 / 2), ImVec2(0, 1), ImVec2(1, 0));
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     return fbo;
@@ -177,7 +193,7 @@ int main(int, char **) {
 
         ImGui::SetNextWindowPos(ImVec2(300, 10));
         {
-            ImGui::Begin("Game rendering");
+            ImGui::Begin("Rendering");
             {
                     // Get the current cursor position (where your window is)
                     ImVec2 pos = ImGui::GetCursorScreenPos();

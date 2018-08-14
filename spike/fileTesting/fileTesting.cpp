@@ -1,6 +1,4 @@
-//
-// Created by Kamin Fay on 6/6/18.
-//
+
 
 #include <iostream>
 #include <fstream>
@@ -10,6 +8,7 @@
 #include <iterator>
 #include <algorithm>
 #include <sys/types.h>
+
 #include <dirent.h>
 
 typedef std::vector<std::string> stringvec;
@@ -33,6 +32,7 @@ int getNumberOfFiles(const std::string& name, stringvec& v){
     closedir(dirp);
     return v.size();
 }
+
 
 
 void read_directory(const std::string& name, stringvec& v, char* fileListTemp[]){
@@ -65,45 +65,73 @@ void read_directory(const std::string& name, stringvec& v, char* fileListTemp[])
 
 int main(void){
 
-    stringvec v;
-    int numberOfFiles = getNumberOfFiles("../templates/", v);
-    std::cout << numberOfFiles << std::endl;
-    v.clear();
-    char *fileListTemp[numberOfFiles];
-    read_directory("../templates/", v, fileListTemp);
+    std::string passing = "Fuckthisshit";
 
-    char testOutput[4] = {'h', 'e', 'l', 'l'};
+    std::string command = "python ../templates/testingExternal.py"; // Do all of the file reads from python in specific 
+    system(command.c_str());
 
-    std::cout << testOutput << std::endl;
-
-    std::string fileName;
-    std::string textIn;
-    std::cout << "Please input the file name you would like to create: " << std::endl;
-    std::cin >> fileName;
-
-    fileName = fileName + ".block";
-    std::ofstream outputFile;
-    outputFile.open("../templates/" + fileName);
-
-    if(outputFile.eof())
-    {
-        std::cout << "File was not created" << std::endl;
-    }else{
-        std::cout << "Enter 3 lines of text seperated by by the enter key" << std::endl;
-        for(int i = 0; i < 3; i++)
-        {
-            std::cin >> textIn;
-            outputFile <<textIn << std::endl;
-        }
-    }
-
-    outputFile.close();
-
-    std::cout << "Please input the file name of the file you would like to delete:" << std::endl;
-    std::cin >> fileName;
-
-    fileName = fileName + ".block";
-    std::remove(("../templates/" + fileName).c_str());
+//    int res = system("../../templates create.py");
+//
+//    stringvec v;
+//    int numberOfFiles = getNumberOfFiles("../templates/", v);
+//    std::cout << numberOfFiles << std::endl;
+//    v.clear();
+//    char *fileListTemp[numberOfFiles];
+//    read_directory("../templates/", v, fileListTemp);
+//
+//    char testOutput[4] = {'h', 'e', 'l', 'l'};
+//    int w, l, h;
+//    int tempType;
+//    int size;
+//    //char type;
+//
+//    std::cout << testOutput << std::endl;
+//
+//    std::string fileName;
+//    std::string textIn;
+//    std::cout << "Please input the file name you would like to read: " << std::endl;
+//    std::cin >> fileName;
+//
+//    fileName = fileName + ".block";
+//    std::ifstream outputFile;
+//    outputFile.open("../templates/" + fileName);
+//
+//    typedef enum {
+//        LENGTH,
+//        WIDTH,
+//        HEIGHT
+//    } type;
+//
+//        while (outputFile >> tempType){
+//            switch(tempType){
+//                case LENGTH:
+//                    outputFile >> size;
+//                    std::cout << size << std::endl;
+//                    break;
+//                case WIDTH:
+//                    outputFile >> size;
+//                    std::cout << size << std::endl;
+//                    break;
+//                case HEIGHT:
+//                    outputFile >> size;
+//                    std::cout << size << std::endl;
+//                    break;
+//                default:
+//                    break;
+//
+//
+//            }
+//        }
+//
+//
+//
+//    outputFile.close();
+//
+//    std::cout << "Please input the file name of the file you would like to delete:" << std::endl;
+//    std::cin >> fileName;
+//
+//    fileName = fileName + ".block";
+//    std::remove(("../templates/" + fileName).c_str());
 
     return 0;
 }

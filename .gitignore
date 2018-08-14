@@ -9,3 +9,4 @@ lib/.DS_Store
 build/
 CMakeFiles/
 *.o
+*.block

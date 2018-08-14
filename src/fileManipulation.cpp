@@ -1,21 +1,8 @@
-//
-// Created by Kamin Fay on 6/7/18.
-//
+
 
 #include "fileManipulation.h"
 
-static const int clamp_size_t_to_int(const size_t data) {
-    static const int max_int = std::numeric_limits<int>::max();
-    return static_cast<int>(data > max_int ? max_int : data);
-}
 
-static bool vector_string_items_getter(void* data, int idx, const char** out_text) {
-    const std::vector<std::string>* fileNames = reinterpret_cast<std::vector<std::string>*>(data);
-    const int elementCount = clamp_size_t_to_int(fileNames->size());
-    if (idx < 0 || idx >= elementCount) return false;
-    *out_text = fileNames->at(idx).data();
-    return true;
-}
 
 int getNumberOfFiles(const std::string& name, stringvec& v){
     DIR* dirp = opendir(name.c_str());
@@ -27,26 +14,14 @@ int getNumberOfFiles(const std::string& name, stringvec& v){
     return v.size();
 }
 
-void read_directoryToString(const std::string& name, stringvec& v){
-    DIR* dirp = opendir(name.c_str());
-    struct dirent * dp;
-    while((dp = readdir(dirp)) != NULL){
-        v.push_back(dp->d_name);
-    }
-    closedir(dirp);
-
-//    for(int i = 0; i < v.size(); i++) {
-//        std::cout << "V content: " << v[i] << std::endl;
-//    }
-}
 
 
 void read_directory(const std::string& name, stringvec& v, charvec& vc, char* fileListTemp[]){
 
-    DIR* dirp = opendir(name.c_str());
-    struct dirent * dp;
+    DIR* dirp = opendir(name.c_str()); // Opens a directory stream and calls it dirp
+    struct dirent * dp; // format of directories
     while((dp = readdir(dirp)) != NULL){
-        v.push_back(dp->d_name);
+        v.push_back(dp->d_name); // Adds each item in the directory to the list
     }
     closedir(dirp);
 
@@ -57,14 +32,7 @@ void read_directory(const std::string& name, stringvec& v, charvec& vc, char* fi
     for(int i = 0; i < vc.size(); i++) {
         fileListTemp[i] = vc[i];
     }
-//
-//    for(int i = 0; i < numberOfFiles; i++){
-//        std::cout << fileListTemp[i] << std::endl;
-//    }
 
-//    for(int i = 0;i < vc.size(); i++){
-//        delete[] vc[i];
-//    }
 }
 
 void clearVectors(stringvec& v, charvec& vc){
@@ -79,7 +47,64 @@ char *convert(const std::string & s)
     return pc;
 }
 
-void readFile(std::string fileName){
+void newFile(std::string fileName, block &block){
+    std::ofstream file;
+    file.open("../templates/" + fileName);
+
+    if(file.eof()){
+        std::cout << "There was an error opening the file... Awkward... " << std::endl;
+    }else{
+        file << "0" << std::endl;
+        file << "0" << std::endl;
+        file << "1" << std::endl;
+        file << "0" << std::endl;
+        file << "2" << std::endl;
+        file << "0" << std::endl;
+    }
+
+    file.close();
+}
+
+void saveFile(std::string fileName, block &block){
+    std::ofstream file;
+    std::string command = "rm ../templates/" + fileName;
+    std::cout << command << std::endl;
+    system(command.c_str());
+    file.open("../templates/" + fileName);
+
+    if(file.eof()){
+        std::cout << "There was an error opening the file... Awkward... " << std::endl;
+    }else{
+        std::cout << "Loading data into file" << std::endl;
+        std::cout << "0" << std::endl;
+        std::cout << int(block.getLength()) << std::endl;
+        std::cout << "1" << std::endl;
+        std::cout << int(block.getWidth()) << std::endl;
+        std::cout << "2" << std::endl;
+        std::cout << int(block.getHeight()) << std::endl;
+        file << "0" << std::endl;
+        file << int(block.getLength()) << std::endl;
+        file << "1" << std::endl;
+        file << int(block.getWidth()) << std::endl;
+        file << "2" << std::endl;
+        file << int(block.getHeight()) << std::endl;
+    }
+
+    file.close();
+}
+
+void readFile(std::string fileName, block &block){
+    typedef enum {
+        LENGTH,
+        WIDTH,
+        HEIGHT
+    } type;
+
+    int tempType;
+    int tempWidth = 0;
+    int tempHeight = 0;
+    int tempLength = 0;
+
     std::ifstream file;
     file.open("../templates/" + fileName);
     std::string tempFileLine;
@@ -88,9 +113,27 @@ void readFile(std::string fileName){
     {
         std::cout << "There was an error opening the file...Awkward..." << std::endl;
     }else{
-        while(std::getline(file, tempFileLine)){
-            std::cout << tempFileLine << std::endl;
-        };
+
+        std::cout << "Opening File Name: " << fileName << std::endl;
+        while (file >> tempType){
+            switch(tempType){
+                case LENGTH:
+                    file >> tempLength;
+                    std::cout << tempLength << std::endl;
+                    break;
+                case WIDTH:
+                    file >> tempWidth;
+                    std::cout << tempWidth << std::endl;
+                    break;
+                case HEIGHT:
+                    file >> tempHeight;
+                    std::cout << tempHeight << std::endl;
+                    break;
+                default:
+                    break;
+            }
+        }
+        block.setBlockSize(tempWidth, tempHeight, tempLength);
     }
 
     file.close();
