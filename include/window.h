@@ -49,7 +49,7 @@ private:
     bool mWindowClosed = true;
 
     std::string mWindowName;
-    ImVec4 clear_color = ImColor(114, 144, 154);
+    ImVec4 clear_color = ImColor(165, 173, 104);
 
     bool mCheckFiles = true;
     stringvec v;

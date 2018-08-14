@@ -12,5 +12,6 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Main function" << std::endl;
 
+
     return EXIT_SUCCESS;
 }

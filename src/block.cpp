@@ -80,6 +80,7 @@ int block::getFrontDrillC(){
 
 std::string block::getOneDrill(int counter, int face){
     std::string temp;
+    // Grabs the location of the ddrill spots and returns the x, y cooridnate in string format
     switch(face){
         case LEFT:
             temp = "X: " + std::to_string(drillSpotsLeft[counter].x) + " Y: " + std::to_string(drillSpotsLeft[counter].y);
@@ -98,19 +99,17 @@ std::string block::getOneDrill(int counter, int face){
 }
 
 ImVec2 block::getOneDrillActual(int counter, int face){
-ImVec2 test;
-switch(face){
-        case LEFT:
-            return drillSpotsLeft[counter];
-            break;
-        case TOP:
-            return drillSpotsTop[counter];
-            break;
-        case FRONT:
-            return drillSpotsFront[counter];
-            break;
-        default:
-            break;
+    ImVec2 test;
+    // Does the same as the above but returns an ImVec2 variable with the x, y coordiantes in it
+    switch(face){
+            case LEFT:
+                return drillSpotsLeft[counter];
+            case TOP:
+                return drillSpotsTop[counter];
+            case FRONT:
+                return drillSpotsFront[counter];
+            default:
+                break;
     }
 
     return test;
@@ -120,6 +119,8 @@ switch(face){
 void block::addDrill(ImVec2 location, int face){
     ImVec2 actualPosition;
 
+    // Depending on which face the block is in it will calculate the actual x, y position on the block itself
+    // It is then pushed into a list of drill holes depended on the block itself
     switch(face){
         case LEFT:
             std::cout << "Screen XY --- X: " << location.x << " Y: " << location.y << std::endl;
@@ -220,6 +221,7 @@ void block::setBlockVerts(){
 }
 
 int block::withinBlock(int test, ImVec2 mousePosition){
+    // Similar to the function in the window and panes. Just simply checks to see if the mouse is within the parameters of the block
     if(mousePosition.x > minimumXYBlockLeft.x && mousePosition.y > minimumXYBlockLeft.y &&
        mousePosition.x < maximumXYBlockLeft.x && mousePosition.y < maximumXYBlockLeft.y){
         std::cout << "Mouse is within the left face of the block" << std::endl;

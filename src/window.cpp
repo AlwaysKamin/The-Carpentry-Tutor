@@ -3,6 +3,7 @@
 #include <imgui_internal.h>
 #include "uploadData.h"
 #include <mysql/mysql.h>
+#include <unistd.h>
 
 window::window(std::string windowName) {
     std::cout << "Window being created..." << std::endl;
@@ -13,6 +14,7 @@ window::window(std::string windowName) {
         return;
     }
 
+    //Sets the hints for the window like minimum and maximum version
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -24,28 +26,36 @@ window::window(std::string windowName) {
     mWindowWidth = mScreenWidth;
     mGapSize = 10;
 
+    // creates a glfw window with the above parameters, sets input mode and makes it the current window
     mWindow = glfwCreateWindow(mScreenWidth, mWindowHeight, mWindowName.c_str(), NULL, NULL);
     glfwSetInputMode(mWindow, GLFW_STICKY_KEYS, 1);
-
-
     glfwMakeContextCurrent(mWindow);
+
+
+    // GLEW Initialization stuff...
     glewExperimental = GL_TRUE;
     glewInit();
     if(glewInit() != GLEW_OK){
         std::cout << "glew was not initiated properly" << std::endl;
     }
 
+    //Not sure why this is down here.
+    //TODO see if this can be moved up with th other size setup stuff
     glfwGetFramebufferSize(mWindow, &mScreenWidth, &mScreenHeight);
 
+    // Creates the ImGui instance and sets the ImGUI bindings to the current GLFW window
     ImGui::CreateContext();
     ImGui_ImplGlfwGL3_Init(mWindow, true);
 
+    // Just some error checking
     if (!mWindow) {
         std::cout << "Window not setup Properly" << std::endl;
         glfwTerminate();
         return;
     }
 
+    //Sets the boolean window check to let the program know the window is open
+    //TODO could probably use a better naming scheme for this variable
     mWindowClosed = false;
 
 
@@ -53,51 +63,52 @@ window::window(std::string windowName) {
 
 }
 
-
-
-
-
 GLuint window::renderObjectToWidget(ImVec2 pos, GLfloat frontVerts[], GLfloat height, GLfloat width, bool ThreeDimensional){
 
 
-//create a vao,vbo
     unsigned int VBO, VAO;
+    //Creates a single vertex array
     glGenVertexArrays(1, &VAO);
+    //Creats a single vertext buffer
     glGenBuffers(1, &VBO);
 
+    //Binds the vertext buffer object and the vertex array object
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
+    //Creates and initiliazes the buffer object's data
     glBufferData(GL_ARRAY_BUFFER, sizeof(frontVerts), frontVerts, GL_STATIC_DRAW);
 
 // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-// color attribute
-    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    //glEnableVertexAttribArray(1);
-
-
-
+    //Creates the frame buffer object and binds it
     GLuint fbo;
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+    //Creates a texture and binds it
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
+
+    // Sets up a 2d texture, with level, width, height, border, format, and type
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 200, 200, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    // Sets the texture parameters, 2d, minimum filter, and linear
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //0 is used to show the default texture
     glBindTexture(GL_TEXTURE_2D, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    //Error checking
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 
-    // Enables the vertex array for writing and rendering
+    }
 
+    // Enables the client side and allows for changes to the vertex arrays
     glEnableClientState(GL_VERTEX_ARRAY);
 
 
@@ -114,6 +125,8 @@ GLuint window::renderObjectToWidget(ImVec2 pos, GLfloat frontVerts[], GLfloat he
     // Param 3: number of indicies to render
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+    //Check to decided if the object is 2D or 3D
+    //TODO fully implement 3D rendering
     if(ThreeDimensional == true){
         glDrawArrays(GL_QUADS, 0, 24);
     }else{
@@ -123,12 +136,14 @@ GLuint window::renderObjectToWidget(ImVec2 pos, GLfloat frontVerts[], GLfloat he
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    // Closes the client state
+    // Closes the client side
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    // Sets up a renderedTexture and binds it
     GLuint mRenderedTexture;
-
-
+    // generates 1 texture to the variable mRenderedTexture
     glGenTextures(1, &mRenderedTexture);
+    // binds mRendered Texture to GL_TEXTURE_2D
     glBindTexture(GL_TEXTURE_2D, mRenderedTexture);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -147,62 +162,71 @@ GLuint window::renderObjectToWidget(ImVec2 pos, GLfloat frontVerts[], GLfloat he
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
 
     glLoadIdentity();
+
     return fbo;
 }
 
 void window::render(){
     std::cout << "Entering Render" << std::endl;
 
+    //Sets up the viewport
     glViewport(0.0f, 0.0f, mWindowWidth, mWindowHeight);
 
+    //Sets the matrix mode to allow for changes in the clipping pane
     glMatrixMode(GL_PROJECTION);
-
+    // Sets everything in to matrix to the identity matrix
     glLoadIdentity();
-
+    //Sets up the cliping panes for the window
     glOrtho(0, mWindowHeight, 0, mWindowHeight, 0, 1000);
 
+    //Changes to the model view and again sets the matrix to the identity matrix
     glMatrixMode( GL_MODELVIEW);
-
     glLoadIdentity();
-
     glClear(GL_COLOR_BUFFER_BIT);
 
     double xPos = 0;
     double yPos = 0;
 
+    // While loop that runs the entire program
     while(!glfwWindowShouldClose(mWindow)){
+        //Creates a new ImGui Frame
         ImGui_ImplGlfwGL3_NewFrame();
+
+        // Gets the window size of mWindow and stores the width and height into mWindowWidth and mWindowHeight
         glfwGetWindowSize(mWindow, &mWindowWidth, &mWindowHeight);
         //std::cout << mWindowWidth << "-----" << mWindowHeight << std::endl;
+
+        // This chunk sets the settings panel width and height as well as the view panels width and height
         spW = ((mWindowWidth * .25) - (1.5 * mGapSize));
         spH = ((mWindowHeight) - (2 * mGapSize));
         vpW = (((mWindowWidth * .75) / 2) - mGapSize);
         vpH = ((mWindowHeight * .5) - (1.5 * mGapSize));
 
+        // Continually gets the mouse position
         mousePosition = ImGui::GetMousePos();
 
+        // Calls all of the view pane functions
+        // Within these will be the structure of those panes as well as some extra code needed
         settingsPane();
         leftViewPane();
         topViewPane();
         frontViewPane();
         objectViewPane();
 
+        // Handling the mouse clicks
         if(ImGui::IsMouseClicked(0)){
+            // Checks which pane the mouse is clicked within
             int testReturn = whichPanel(mousePosition);
+            // Checks if the mouse click is within one of the front, top, or side view of the block
             int test = block.withinBlock(1, mousePosition);
+            //Checks if its within parameters and then adds a drill slot
+            //TODO I feel like this should be moved at some point, feels clunky to have it here
             if(clickBlock == true && test != 0){
                 block.addDrill(mousePosition, test);
                 clickBlock = false;
                 upload(test);
             }
         }
-
-        glPushMatrix();
-        glTranslatef(mWindowWidth / 2, mWindowHeight / 2, -500);
-        glRotatef(mRotationX, 1, 0, 0);
-        glRotatef(mRotationY, 0, 1, 0);
-        glTranslatef(-(mWindowWidth / 2), -(mWindowHeight / 2), 500);
-        glPopMatrix();
 
         glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -214,13 +238,10 @@ void window::render(){
 
         //Events bullshit
         glfwPollEvents();
+
     }
 
 }
-
-
-
-
 
 void window::settingsPane(){
     mWindowWidth = 1920;
@@ -255,6 +276,7 @@ void window::settingsPane(){
                     std::string fileName;
                     char labelBuff[32];
 
+                    // Sets up for the file browser
                 ImGui::SetNextWindowPos(ImVec2((2* mGapSize) + spW, mGapSize));
                     if (ImGui::BeginPopupModal("openPopUp")) {
 
@@ -299,6 +321,7 @@ void window::settingsPane(){
 
                 if (ImGui::Button("Save File")){
                     //TODO contents here for saving a file
+                    // Saves the file and pushes the block data to the server
                     std::cout << fileNameInput;
                     std::cout << "Saving: " << mFileName << std::endl;
                     saveFile(mFileName, block);
@@ -309,6 +332,7 @@ void window::settingsPane(){
             }
             ImGui::Separator();
 
+            // Camera drop down
             if (ImGui::CollapsingHeader("Camera")) {
                 camera camera;
                 ImGui::Button("Reload Camera");
@@ -322,11 +346,14 @@ void window::settingsPane(){
             }
             ImGui::Separator();
 
+            //Tools drop down
             if (ImGui::CollapsingHeader("Tools")) {
                 float tempLength = block.getLength();
                 float tempWidth = block.getWidth();
                 float tempHeight = block.getHeight();
                 ImGui::Text("Block Size Modification");
+
+                //Sliders store the temp variables and then send to the block settings
                 ImGui::SliderFloat("Length", &tempLength, 0.0f, 1000.0f);
                 block.setLength(tempLength);
                 ImGui::SliderFloat("Width", &tempWidth, 0.0f, 1000.0f);
@@ -358,6 +385,7 @@ void window::settingsPane(){
 void window::leftViewPane(){
 
     {
+
         minimumXYLeftView = ImVec2((2 * mGapSize) + spW, mGapSize);
         maximumXYLeftView = ImVec2(minimumXYLeftView.x + vpW, minimumXYLeftView.y + vpH);
 
@@ -369,6 +397,7 @@ void window::leftViewPane(){
         ImVec2 maxPos = ImVec2(pos.x + block.getLength(), pos.y + block.getHeight());
         block.setLeftMinMax(pos, maxPos);
 
+        //If a block is loaded it will render it
         if(blockIsLoaded){
             renderObjectToWidget(pos, block.getSideVerts(), block.getHeight(), block.getLength(), false);
         }
@@ -504,20 +533,21 @@ void window::upload(int face){
 }
 
 int window::whichPanel(ImVec2 mousePosition){
+    // Simply checks if the mouse position is within the bounds of a pane
     if(mousePosition.x > minimumXYLeftView.x && mousePosition.y > minimumXYLeftView.y &&
        mousePosition.x < maximumXYLeftView.x && mousePosition.y < maximumXYLeftView.y){
         std::cout << "Mouse is clicked within the left view panel." << std::endl;
-        return 1;
+        return left;
     }else if(mousePosition.x > minimumXYTopView.x && mousePosition.y > minimumXYTopView.y &&
              mousePosition.x < maximumXYTopView.x && mousePosition.y < maximumXYTopView.y){
         std::cout << "Mouse is clicked within the top view panel." << std::endl;
-        return 2;
+        return top;
     }else if(mousePosition.x > minimumXYFrontView.x && mousePosition.y > minimumXYFrontView.y &&
              mousePosition.x < maximumXYFrontView.x && mousePosition.y < maximumXYFrontView.y){
         std::cout << "Mouse is clicked within the front view panel." << std::endl;
         return 3;
     }else {
         std::cout << "Not clicked within object panels" << std::endl;
-        return 0;
+        return front;
     }
 }
