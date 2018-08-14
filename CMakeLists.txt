@@ -17,7 +17,7 @@ if (COMPILER_SUPPORTS_CXX11)
 
 
 elseif (COMPILER_SUPPORTS_CXX0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    set(CMAKE_CXX_FLAGS "--sysroot ${CMAKE_CXX_FLAGS} -std=c++0x")
 endif ()
 
 find_library(REALSENSE2_FOUND realsense2 HINTS ${LIBRARY_DIR} REQUIRED)
@@ -29,7 +29,6 @@ endif ()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_HOME_DIRECTORY}/bin)
 
-add_subdirectory(lib/imgui)
 
 # glfw
 find_package(glfw3 REQUIRED)
@@ -46,16 +45,20 @@ include_directories(${GLEW_INCLUDE_DIRS})
 
 find_package(OpenCV REQUIRED)
 
+add_subdirectory(lib/imgui)
+
+
 if (APPLE)
     find_library(OpenGL_LIBRARY OpenGL)
 endif (APPLE)
 
 # getting-started
-add_executable(CarpentryTutor src/main.cpp src/window.cpp include/window.h src/fileManipulation.cpp include/fileManipulation.h)
+add_executable(CarpentryTutor src/main.cpp src/window.cpp include/window.h src/fileManipulation.cpp include/fileManipulation.h src/camera.cpp include/camera.h src/block.cpp include/block.hpp src/uploadData.cpp include/uploadData.h)
 include_directories(include)
 target_link_libraries(CarpentryTutor
         ${REALSENSE2_FOUND}
         imgui
+        ${OpenCV_LIBS}
         ${OPENGL_LIBRARIES}
         glfw
         ${GLEW_LIBRARIES})
@@ -80,8 +83,12 @@ target_link_libraries(
         ${GLEW_LIBRARIES}
 )
 
-add_executable(fileTesting spike/fileTesting/fileTesting.cpp)
-include_directories(fileTesting ${ADDITIONAL_INCLUDE_DIRS} include)
+option(BUILD_FILETESTING "Building file testing spike" OFF)
+
+if(BUILD_FILETESTING)
+    add_subdirectory(spike/fileTesting)
+        endif()
+
 
 
 add_executable(distanceTest spike/distanceTest/distanceTest.cpp)
