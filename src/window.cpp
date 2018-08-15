@@ -506,29 +506,29 @@ window::~window() {
 }
 
 void window::upload(int face){
-    ImVec2 temp;
-    switch(face){
-        case 1:
-            for(int i = 0; i < block.getSideDrillC(); i++){
-                temp = block.getOneDrillActual(i, block.LEFT);
-                pushCutData(mFileName, face, temp.x, temp.y);
-                }
-            break;
-        case 2:
-            for(int i = 0; i < block.getTopDrillC(); i++){
-                temp = block.getOneDrillActual(i, block.TOP);
-                pushCutData(mFileName, face, temp.x, temp.y);
-                }
-            break;
-        case 3:
-            for(int i = 0; i < block.getFrontDrillC(); i++){
-                temp = block.getOneDrillActual(i, block.FRONT);
-                pushCutData(mFileName,face, temp.x, temp.y);
-                }
-            break;
-        default:
-            break;
-    }
+//    ImVec2 temp;
+//    switch(face){
+//        case 1:
+//            for(int i = 0; i < block.getSideDrillC(); i++){
+//                temp = block.getOneDrillActual(i, block.LEFT);
+//                pushCutData(mFileName, face, temp.x, temp.y);
+//                }
+//            break;
+//        case 2:
+//            for(int i = 0; i < block.getTopDrillC(); i++){
+//                temp = block.getOneDrillActual(i, block.TOP);
+//                pushCutData(mFileName, face, temp.x, temp.y);
+//                }
+//            break;
+//        case 3:
+//            for(int i = 0; i < block.getFrontDrillC(); i++){
+//                temp = block.getOneDrillActual(i, block.FRONT);
+//                pushCutData(mFileName,face, temp.x, temp.y);
+//                }
+//            break;
+//        default:
+//            break;
+//    }
 
 }
 
