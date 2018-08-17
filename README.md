@@ -1,13 +1,30 @@
 # The-Carpenter-Tutor
 
-## Setup
+## Mac Setup
 ---
 
-Grab all of the dependncies:
-  - GLEW
-  - GLFW3
-  - OpenGL
-  - Intel Realsense
+Install Homebrew:
+- www.brew.sh
+
+Setup path:
+```console
+nano ~/.bash_profile
+
+#brew
+exportPATH=/usr/local/bin:$PATH
+```
+
+Grab dependencies:
+```console
+brew install cmake
+brew install glew
+brew install glfw3
+
+brew tap homebrew/science
+brew install opencv3 --with-contrib
+brew install librealsense
+
+```
   
 Clone this repository to wherever you'd like:
 
@@ -28,6 +45,6 @@ make
 To Run:
 
 ```console
-cd [path]/The-Carpentry-Tutor/bin
-./[Name of Program]
+cd [path]/The-Carpentry-Tutor
+./bin/CarpentryTutor
 ```
