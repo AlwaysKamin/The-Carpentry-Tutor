@@ -11,6 +11,7 @@
 #include <dirent.h>
 #include <iostream>
 
+
 #include "block.hpp"
 
 typedef std::vector<std::string> stringvec;
@@ -24,13 +25,10 @@ const struct file {
 
 
 int getNumberOfFiles(const std::string& name, stringvec& v);
-
 void read_directory(const std::string& name, stringvec& v, charvec& vc, char* fileListTemp[]);
 char *convert(const std::string & s);
-
 void clearVectors(stringvec& v, charvec& vc);
-
 void readFile(std::string fileName, block &block);
 void newFile(std::string fileName, block &block);
-void saveFile(std::string fileName, block &block);
-
+void saveFile(std::string fileName, block &block, bool newFile);
+int returnNum(std::string toConvert);

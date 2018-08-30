@@ -63,7 +63,7 @@ window::window(std::string windowName) {
 
 }
 
-GLuint window::renderObjectToWidget(ImVec2 pos, GLfloat frontVerts[], GLfloat height, GLfloat width, bool ThreeDimensional){
+void window::renderObjectToWidget(ImVec2 pos, GLfloat frontVerts[], GLfloat height, GLfloat width, bool ThreeDimensional){
 
 
     unsigned int VBO, VAO;
@@ -162,8 +162,6 @@ GLuint window::renderObjectToWidget(ImVec2 pos, GLfloat frontVerts[], GLfloat he
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINES);
 
     glLoadIdentity();
-
-    return fbo;
 }
 
 void window::render(){
@@ -264,7 +262,7 @@ void window::settingsPane(){
                         //TODO content here for creating a new file
                         newOrOpen = false;
                         std::cout << fileNameInput;
-                        newFile(fileNameInput, block);
+                        saveFile(fileNameInput, block, true);
                     }
 
                     if (ImGui::Button("Open File")){
@@ -324,7 +322,7 @@ void window::settingsPane(){
                     // Saves the file and pushes the block data to the server
                     std::cout << fileNameInput;
                     std::cout << "Saving: " << mFileName << std::endl;
-                    saveFile(mFileName, block);
+                    saveFile(mFileName, block, false);
                     pushBlockData(block.getBlockName(), block.getLength(), block.getWidth(), block.getHeight());
                     blockIsLoaded = false;
                     newOrOpen = true;
