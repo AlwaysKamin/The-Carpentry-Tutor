@@ -3,9 +3,9 @@
 ## UPDATE:
 
 - This project is currently be reworked at the moment. I am shifinting away from the PHP middleware for database management to a GO API instead under this project:
-  - https://github.com/KaminFay/CarpentryTutorApi
+  - [Carpentry Tutor API](https://github.com/KaminFay/CarpentryTutorApi)
 - I have archived the mobile app that was used for testing while working on this for school:
-  - https://github.com/KaminFay/TheCarpentryTutorApp
+  - [Old Carpentry Tutor App](https://github.com/KaminFay/TheCarpentryTutorApp)
 - And I will be starting a ground up overhaul of this project, I feel there is a lot of promise for what can be done here but it needs a refresh (not a time crunched school project).
 
 ## Mac Setup
